@@ -80,19 +80,19 @@ api.interceptors.response.use(
 )
 
 // —— 小说 ——
-export const listNovels = () => api.get('/novels').then(r => r.data)
-export const getNovel = (novelId) => api.get(`/novels/${novelId}`).then(r => r.data)
-export const createNovel = (payload) => api.post('/novels', payload).then(r => r.data)
-export const updateNovel = (novelId, payload) => api.put(`/novels/${novelId}`, payload).then(r => r.data)
-export const deleteNovel = (novelId) => api.delete(`/novels/${novelId}`).then(r => r.data)
+export const listNovels = () => api.get('/api/novels').then(r => r.data)
+export const getNovel = (novelId) => api.get(`/api/novels/${novelId}`).then(r => r.data)
+export const createNovel = (payload) => api.post('/api/novels', payload).then(r => r.data)
+export const updateNovel = (novelId, payload) => api.put(`/api/novels/${novelId}`, payload).then(r => r.data)
+export const deleteNovel = (novelId) => api.delete(`/api/novels/${novelId}`).then(r => r.data)
 
 // —— 章节目录（ChapterDetail）——
-export const listChaptersDetail = (novelId) => api.get(`/novels/${novelId}/chapters`).then(r => r.data)
+export const listChaptersDetail = (novelId) => api.get(`/api/novels/${novelId}/chapters`).then(r => r.data)
 
 // —— 章节正文 ——
-export const getChapter = (novelId, chapterIndex) => api.get(`/chapters/${novelId}/${chapterIndex}`).then(r => r.data)
-export const createChapter = (novelId, payload) => api.post(`/chapters/${novelId}`, payload).then(r => r.data)
-export const updateChapter = (novelId, chapterIndex, payload) => api.put(`/chapters/${novelId}/${chapterIndex}`, payload).then(r => r.data)
-export const deleteChapter = (novelId, chapterIndex) => api.delete(`/chapters/${novelId}/${chapterIndex}`).then(r => r.data)
+export const getChapter = (novelId, chapterIndex) => api.get(`/api/chapters/${novelId}/${chapterIndex}`).then(r => r.data)
+export const createChapter = (novelId, payload) => api.post(`/api/chapters/${novelId}`, payload).then(r => r.data)
+export const updateChapter = (novelId, chapterIndex, payload) => api.put(`/api/chapters/${novelId}/${chapterIndex}`, payload).then(r => r.data)
+export const deleteChapter = (novelId, chapterIndex) => api.delete(`/api/chapters/${novelId}/${chapterIndex}`).then(r => r.data)
 
 export default api
