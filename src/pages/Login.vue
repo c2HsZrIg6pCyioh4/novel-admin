@@ -64,7 +64,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import api from '../api/index.js'
+import request from '../api/index.js'
 import { getServerAddress } from '../utils/server'
 
 const router = useRouter()
@@ -112,8 +112,14 @@ async function submitToken() {
     // 获取服务器地址
     const { default: serverAddress } = await getServerAddress()
 
-    await request.post('/validate-token', null, {
-      headers: { Authorization: `Bearer ${token.value.trim()}` }
+// 使用 POST 请求验证 token
+    await request({
+      url: '/validate-token',
+      method: 'post',
+      data: {}, // 如果后端需要 body，可以放这里，否则空对象
+      headers: {
+        Authorization: `Bearer ${token.value.trim()}`
+      }
     })
 
     // 验证通过，保存token并跳转
