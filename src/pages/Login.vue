@@ -111,14 +111,11 @@ async function submitToken() {
   try {
     // 获取服务器地址
     const { default: serverAddress } = await getServerAddress()
-    
-    // 验证token有效性
-    await api.post(`${serverAddress}/validate-token`, null, {
-      headers: {
-        'Authorization': `Bearer ${token.value.trim()}`
-      }
+
+    await request.post('/validate-token', null, {
+      headers: { Authorization: `Bearer ${token.value.trim()}` }
     })
-    
+
     // 验证通过，保存token并跳转
     localStorage.setItem('token', token.value.trim())
     const redirect = route.query.redirect || '/novels'
@@ -133,33 +130,6 @@ async function submitToken() {
 async function submitAccount() {
   error.value = ''
   loading.value = true
-  
-  try {
-    if (!username.value || !password.value) {
-      throw new Error('请输入用户名和密码')
-    }
-    
-    // 获取服务器地址
-    const { default: serverAddress } = await getServerAddress()
-    
-    const res = await api.post(`${serverAddress}${loginPath}`, { 
-      username: username.value, 
-      password: password.value 
-    })
-    
-    const tk = res?.data?.token || res?.token || res?.data
-    if (!tk) throw new Error('登录响应未返回token')
-    
-    localStorage.setItem('token', tk)
-    const redirect = route.query.redirect || '/novels'
-    await router.replace(String(redirect))
-    window.location.reload()
-  } catch (e) {
-    error.value = e?.response?.data?.message || e?.message || '登录失败'
-    console.error('Account login error:', e)
-  } finally {
-    loading.value = false
-  }
 }
 </script>
 
