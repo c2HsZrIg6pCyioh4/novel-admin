@@ -5,6 +5,9 @@
     <nav class="links">
       <router-link to="/novels">📚 小说列表</router-link>
     </nav>
+
+    <div class="spacer" />
+
     <div class="auth">
       <template v-if="authEnabled">
         <router-link v-if="!hasToken" class="btn" to="/login">登录</router-link>
