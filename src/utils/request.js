@@ -19,13 +19,5 @@ request.interceptors.request.use(async config => {
     return config
 }, error => Promise.reject(error))
 
-// 响应拦截器
-request.interceptors.response.use(
-    response => response.data,
-    error => {
-        const msg = error.response?.data?.message || error.message || '请求失败'
-        return Promise.reject(new Error(msg))
-    }
-)
 
 export default request
