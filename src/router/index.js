@@ -21,14 +21,28 @@ const routes = [
 const router = createRouter({ history: createWebHistory(), routes })
 
 // 鉴权开关：当 VITE_AUTH_ENABLED=true 时启用路由守卫，其它情况放行
-const authEnabled = (import.meta.env.VITE_AUTH_ENABLED || 'false') === 'true'
+const authEnabled = (import.meta.env.VITE_AUTH_ENABLED || 'true') === 'true'
 
 // 需要登录的路由守卫
 router.beforeEach((to, from, next) => {
-  if (to.path === '/login') return next()
-  if (!authEnabled) return next()
+  const isDev = import.meta.env.DEV
+
+  if (to.path === '/login') {
+    return next()
+  }
+
+  if (!authEnabled) {
+    isDev && console.log('[Router] Auth is disabled, allowing access to', to.path)
+    return next()
+  }
+
   const token = localStorage.getItem('token')
-  if (token) return next()
+  if (token) {
+    isDev && console.log('[Router] Auth enabled and token found, allowing access to', to.path)
+    return next()
+  }
+
+  isDev && console.log(`[Router] Auth enabled but no token, redirecting to login with redirect=${to.fullPath}`)
   next({ path: '/login', query: { redirect: to.fullPath } })
 })
 
