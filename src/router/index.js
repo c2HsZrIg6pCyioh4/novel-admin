@@ -9,6 +9,12 @@ import Login from '../pages/Login.vue'
 const routes = [
   { path: '/', redirect: '/novels' },
   { path: '/login', component: Login },
+  {
+    path: '/oauth/wechat/callback',
+    name: 'GitHubOAuthCallback',
+    component: () => import('@/pages/OAuthCallback.vue'),
+    props: (route) => ({ code: route.query.code, state: route.query.state })
+  },
   { path: '/novels', component: NovelsList },
   { path: '/novels/new', component: NovelEdit },
   { path: '/novels/:novelId/edit', component: NovelEdit, props: true },
@@ -26,8 +32,9 @@ const authEnabled = (import.meta.env.VITE_AUTH_ENABLED || 'true') === 'true'
 // 需要登录的路由守卫
 router.beforeEach((to, from, next) => {
   const isDev = import.meta.env.DEV
+  const publicRoutes = ['/login', '/oauth/wechat/callback']
 
-  if (to.path === '/login') {
+  if (publicRoutes.includes(to.path)) {
     return next()
   }
 

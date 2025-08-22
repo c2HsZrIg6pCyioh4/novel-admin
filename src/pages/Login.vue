@@ -64,12 +64,37 @@ onMounted(() => {
   }
 })
 
-function oauthLogin(provider) {
-  const redirectUri = encodeURIComponent(window.location.origin + '/login')
-  const authUrl = `/oauth/${provider}?redirect_uri=${redirectUri}`
-  window.location.href = authUrl
-}
+async function oauthLogin(provider) {
+  try {
+    // 1. 从服务端获取 OAuth 配置
+    const config = await request('/auth/config')
+    // 模拟返回结构:
+    // {
+    //   wechat: { clientId: 'xxx', scope: 'snsapi_login', authServer: 'https://open.weixin.qq.com/connect/qrconnect' }
+    // }
 
+    const providerConfig = config[provider]
+    if (!providerConfig) throw new Error(`未找到 ${provider} 的配置`)
+
+    const { clientId, scope = 'user', authServer } = providerConfig
+    const redirectUri = encodeURIComponent(window.location.origin + `/oauth/${provider}/callback`)
+
+    // 2. 构建授权 URL
+    let authUrl = ''
+    switch(provider) {
+      case 'wechat':
+        authUrl = `${authServer}?appid=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`
+        break
+      default:
+        throw new Error(`不支持的 provider: ${provider}`)
+    }
+
+    // 3. 跳转到第三方授权页面
+    window.location.href = authUrl
+  } catch (err) {
+    console.error('获取 OAuth 配置失败:', err)
+  }
+}
 async function submitToken() {
   error.value = ''
   if (!token.value.trim()) {
