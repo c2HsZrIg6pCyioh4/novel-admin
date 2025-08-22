@@ -1,7 +1,7 @@
 <template>
   <section class="card">
     <header class="card-hd">
-      <h2>章节目录 - {{ novelId }}</h2>
+      <h2>章节目录 - {{ novelName }}</h2>
       <div class="actions">
         <router-link class="btn" :to="`/novels/${novelId}/chapters/new`">新增章节</router-link>
         <router-link class="btn" :to="`/novels`">返回小说列表</router-link>
@@ -38,17 +38,20 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { listChaptersDetail, deleteChapter } from '../api'
+import {listNovels, listChaptersDetail, deleteChapter, getNovel} from '../api'
 
 const route = useRoute()
 const novelId = route.params.novelId
+const novelName = ref([])
 const chapters = ref([])
 let latestIndex = 0
 
 async function load() {
+  const novels = await getNovel(novelId)
   const list = await listChaptersDetail(novelId)
   chapters.value = list
   latestIndex = Math.max(...list.map(x => x.chapter_index || 0))
+  novelName.value= novels.name
 }
 
 async function del(idx) {
