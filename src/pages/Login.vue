@@ -5,21 +5,7 @@
       <p class="desc">请选择登录方式</p>
 
       <div class="login-methods">
-        <!-- OAuth 登录 -->
-        <div class="method-card" v-if="oauthEnabled">
-          <h2>OAuth 登录</h2>
-          <div class="oauth-providers">
-            <button class="oauth-btn google" @click="oauthLogin('google')">
-              <span class="icon">G</span> Google
-            </button>
-            <button class="oauth-btn github" @click="oauthLogin('github')">
-              <span class="icon">G</span> GitHub
-            </button>
-            <button class="oauth-btn wechat" @click="oauthLogin('wechat')">
-              <span class="icon">W</span> 微信
-            </button>
-          </div>
-        </div>
+
 
         <!-- Token 登录 -->
         <div class="method-card">
@@ -29,34 +15,25 @@
             <input v-model="token" placeholder="输入您的访问令牌" />
           </div>
           <button class="submit-btn" @click="submitToken">使用 Token 登录</button>
+          <!-- OAuth 登录 -->
+            <div class="oauth-providers">
+              <button class="oauth-btn wechat" @click="oauthLogin('wechat')">
+                <span class="icon">W</span> 微信
+              </button>
+          </div>
         </div>
 
-        <!-- 账号密码登录 -->
-        <div class="method-card" v-if="useBackendLogin">
-          <h2>账号密码登录</h2>
-          <div class="form-group">
-            <label>用户名</label>
-            <input v-model="username" placeholder="用户名" />
-          </div>
-          <div class="form-group">
-            <label>密码</label>
-            <input type="password" v-model="password" placeholder="密码" />
-          </div>
-          <button class="submit-btn" @click="submitAccount">登录</button>
-        </div>
-      </div>
 
       <div v-if="error" class="error">{{ error }}</div>
 
       <div class="tips">
         <p>说明：</p>
         <ul>
-          <li v-if="oauthEnabled">OAuth 登录：通过第三方平台授权登录</li>
+          <li>OAuth 登录：通过第三方平台授权登录</li>
           <li>Token 登录：直接使用访问令牌登录系统</li>
-          <li v-if="useBackendLogin">账号密码登录：使用系统账号密码登录</li>
-          <li>无后端或调试：可直接输入 Token，或留空使用 dev-token</li>
         </ul>
       </div>
+    </div>
     </div>
   </section>
 </template>
@@ -76,14 +53,6 @@ const token = ref(localStorage.getItem('token') || '')
 const loading = ref(false)
 const error = ref('')
 
-const loginPath = import.meta.env.VITE_LOGIN_PATH || '/auth/login'
-const oauthPath = import.meta.env.VITE_OAUTH_PATH || '/oauth'
-const useBackendLogin = 
-  (import.meta.env.VITE_AUTH_ENABLED || 'false') === 'true' &&
-  (import.meta.env.VITE_USE_LOGIN_API || 'false') === 'true'
-const oauthEnabled = 
-  (import.meta.env.VITE_OAUTH_ENABLED || 'false') === 'true'
-
 // 初始化时检查URL中的token参数（用于OAuth回调）
 onMounted(() => {
   const urlToken = route.query.token
@@ -97,7 +66,7 @@ onMounted(() => {
 
 function oauthLogin(provider) {
   const redirectUri = encodeURIComponent(window.location.origin + '/login')
-  const authUrl = `${oauthPath}/${provider}?redirect_uri=${redirectUri}`
+  const authUrl = `/oauth/${provider}?redirect_uri=${redirectUri}`
   window.location.href = authUrl
 }
 

@@ -9,10 +9,7 @@
     <div class="spacer" />
 
     <div class="auth">
-      <template v-if="authEnabled">
-        <router-link v-if="!hasToken" class="btn" to="/login">登录</router-link>
-        <button v-else class="btn danger" @click="logout">退出登录</button>
-      </template>
+        <button v-if="hasToken" class="btn danger" @click="logout">退出登录</button>
     </div>
   </header>
 </template>
@@ -24,7 +21,6 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const token = ref(localStorage.getItem('token') || '')
 const hasToken = ref(!!token.value)
-const authEnabled = (import.meta.env.VITE_AUTH_ENABLED || 'false') === 'true'
 
 function refresh() {
   token.value = localStorage.getItem('token') || ''
