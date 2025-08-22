@@ -65,6 +65,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import api from '../api/index.js'
+import { getServerAddress } from '../utils/server'
 
 const router = useRouter()
 const route = useRoute()
@@ -107,13 +108,16 @@ async function submitToken() {
     return
   }
   
-    try {
-      // 验证token有效性
-      await api.post('/api/validate-token', null, {
-        headers: {
-          'Authorization': `Bearer ${token.value.trim()}`
-        }
-      })
+  try {
+    // 获取服务器地址
+    const { default: serverAddress } = await getServerAddress()
+    
+    // 验证token有效性
+    await api.post(`${serverAddress}/validate-token`, null, {
+      headers: {
+        'Authorization': `Bearer ${token.value.trim()}`
+      }
+    })
     
     // 验证通过，保存token并跳转
     localStorage.setItem('token', token.value.trim())
@@ -134,8 +138,11 @@ async function submitAccount() {
     if (!username.value || !password.value) {
       throw new Error('请输入用户名和密码')
     }
-
-    const res = await api.post(loginPath, { 
+    
+    // 获取服务器地址
+    const { default: serverAddress } = await getServerAddress()
+    
+    const res = await api.post(`${serverAddress}${loginPath}`, { 
       username: username.value, 
       password: password.value 
     })
