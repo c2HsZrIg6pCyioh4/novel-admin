@@ -8,8 +8,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import request from '@/api/index.js'
-
+import {authLogin} from '../api'
 const route = useRoute()
 const router = useRouter()
 
@@ -18,7 +17,7 @@ const error = ref('')
 
 onMounted(async () => {
   try {
-    const { code, state } = route.query
+    const { code, state ,user} = route.query
     const provider = route.params.provider  // 获取动态 provider
     if (!provider) throw new Error('缺少 OAuth provider 参数')
     if (!code) throw new Error('缺少授权码参数')
@@ -28,7 +27,7 @@ onMounted(async () => {
     const tokenData = await authLogin(provider, { code, state, user })
     if (!tokenData) throw new Error('未收到访问令牌')
     // 保存 token 并跳转到原页面或小说列表
-    localStorage.setItem('token', token)
+    localStorage.setItem('token', tokenData.token)
     const redirect = route.query.redirect || '/novels'
     router.replace(redirect)
   } catch (err) {
