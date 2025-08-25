@@ -8,7 +8,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import request from '@/api/index.js'  // 自定义 axios 封装
+import request from '@/api/index.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -19,13 +19,14 @@ const error = ref('')
 onMounted(async () => {
   try {
     const { code, state } = route.query
+    const provider = route.params.provider  // 获取动态 provider
+    if (!provider) throw new Error('缺少 OAuth provider 参数')
     if (!code) throw new Error('缺少授权码参数')
 
-    // 调用后端 OAuth 回调接口，交换授权码获取访问令牌
-    const response = await request.post('/oauth/wechat/callback', { code, state })
-    const token = response.token || response.access_token
-    if (!token) throw new Error('未收到访问令牌')
-
+    // 调用后端 OAuth 回调接口
+    // 动态请求：/oauth/{provider}/callback
+    const tokenData = await authLogin(provider, { code, state, user })
+    if (!tokenData) throw new Error('未收到访问令牌')
     // 保存 token 并跳转到原页面或小说列表
     localStorage.setItem('token', token)
     const redirect = route.query.redirect || '/novels'

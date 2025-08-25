@@ -9,11 +9,17 @@ import Login from '../pages/Login.vue'
 const routes = [
   { path: '/', redirect: '/novels' },
   { path: '/login', component: Login },
+  // OAuth 回调统一路由
   {
-    path: '/oauth/wechat/callback',
-    name: 'GitHubOAuthCallback',
+    path: '/oauth/:provider/callback',
+    name: 'OAuthCallback',
     component: () => import('@/pages/OAuthCallback.vue'),
-    props: (route) => ({ code: route.query.code, state: route.query.state })
+    props: (route) => ({
+      provider: route.params.provider,
+      code: route.query.code,
+      state: route.query.state,
+      user: route.query.user|| null ,
+    })
   },
   { path: '/novels', component: NovelsList },
   { path: '/novels/new', component: NovelEdit },
@@ -32,7 +38,7 @@ const authEnabled = (import.meta.env.VITE_AUTH_ENABLED || 'true') === 'true'
 // 需要登录的路由守卫
 router.beforeEach((to, from, next) => {
   const isDev = import.meta.env.DEV
-  const publicRoutes = ['/login', '/oauth/wechat/callback']
+  const publicRoutes = ['/login', '/oauth/wechat/callback', '/oauth/apple/callback']
 
   if (publicRoutes.includes(to.path)) {
     return next()

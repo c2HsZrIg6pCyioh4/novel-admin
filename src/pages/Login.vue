@@ -20,6 +20,9 @@
               <button class="oauth-btn wechat" @click="oauthLogin('wechat')">
                 <span class="icon">W</span> 微信
               </button>
+              <button class="oauth-btn apple" @click="oauthLogin('apple')">
+                <span class="icon"></span> Apple
+              </button>
           </div>
         </div>
 
@@ -66,33 +69,38 @@ onMounted(() => {
 
 async function oauthLogin(provider) {
   try {
-    // 1. 从服务端获取 OAuth 配置
-    const config = await request('/auth/config')
-    // 模拟返回结构:
-    // {
-    //   wechat: { clientId: 'xxx', scope: 'snsapi_login', authServer: 'https://open.weixin.qq.com/connect/qrconnect' }
-    // }
+    // 获取服务器地址
+    const { default: serverAddress } = await getServerAddress()
 
-    const providerConfig = config[provider]
-    if (!providerConfig) throw new Error(`未找到 ${provider} 的配置`)
+    // 1️⃣ 从服务端获取 OAuth 配置
+    const config = await request(`${serverAddress}/oauth/${provider}/config`)
 
-    const { clientId, scope = 'user', authServer } = providerConfig
-    const redirectUri = encodeURIComponent(window.location.origin + `/oauth/${provider}/callback`)
+    if (!config) throw new Error(`未找到 ${provider} 的配置`)
 
-    // 2. 构建授权 URL
+    const { client_id, redirect_uri, scope, client_secret, auth_url } = config
+
+    // 2️⃣ 生成随机 state
+    const state = Math.random().toString(36).substring(2, 10)
+
+    // 3️⃣ 构建 Apple 登录 URL
     let authUrl = ''
     switch(provider) {
       case 'wechat':
-        authUrl = `${authServer}?appid=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`
+        authUrl = `${config.authServer}?response_type=code&response_mode=form_post&client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${scope}&state=${state}`
+        break
+      case 'apple':
+        authUrl = `https://appleid.apple.com/auth/authorize?response_type=code&response_mode=form_post&client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${scope}&state=${state}`
         break
       default:
         throw new Error(`不支持的 provider: ${provider}`)
     }
 
-    // 3. 跳转到第三方授权页面
+    // 4️⃣ 跳转到第三方授权页面
     window.location.href = authUrl
+
   } catch (err) {
     console.error('获取 OAuth 配置失败:', err)
+    error.value = 'OAuth 登录失败，请重试'
   }
 }
 async function submitToken() {

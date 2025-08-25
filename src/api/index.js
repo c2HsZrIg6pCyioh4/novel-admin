@@ -6,7 +6,9 @@ export const getNovel = (novelId) => request({ url: `/novels/${novelId}`, method
 export const createNovel = (payload) => request({ url: '/novels', method: 'post', data: payload })
 export const updateNovel = (novelId, payload) => request({ url: `/novels/${novelId}`, method: 'put', data: payload })
 export const deleteNovel = (novelId) => request({ url: `/novels/${novelId}`, method: 'delete' })
-
+// 验证 OAuth 登录并获取 token
+export const authLogin = (provider, data) =>
+    request({ url: `/oauth/${provider}/callback`, method: 'post', data })
 // —— 章节目录（ChapterDetail）——
 export const listChaptersDetail = (novelId) => request({ url: `/novels/${novelId}/chapters`, method: 'get' })
 
