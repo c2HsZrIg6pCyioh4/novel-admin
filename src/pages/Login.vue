@@ -17,9 +17,9 @@
           <button class="submit-btn" @click="submitToken">使用 Token 登录</button>
           <!-- OAuth 登录 -->
             <div class="oauth-providers">
-              <button class="oauth-btn wechat" @click="oauthLogin('wechat')">
-                <span class="icon">W</span> 微信
-              </button>
+<!--              <button class="oauth-btn wechat" @click="oauthLogin('wechat')">-->
+<!--                <span class="icon">W</span> 微信-->
+<!--              </button>-->
               <button class="oauth-btn apple" @click="oauthLogin('apple')">
                 <span class="icon"></span> Apple
               </button>
