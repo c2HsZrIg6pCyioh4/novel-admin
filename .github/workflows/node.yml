@@ -65,24 +65,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # 上传到 Tag Release
       - name: Upload zip and checksum to Tagged Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ github.ref_name }}
           files: |
             dist-${{ github.ref_name }}.zip
             dist-${{ github.ref_name }}.zip.sha256
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create/Update Latest Release
-        uses: ncipollo/release-action@v1
+      
+      # 更新 Latest Release
+      - name: Update Latest Release
+        uses: softprops/action-gh-release@v1
         with:
-          tag: latest
-          name: Latest Release
+          tag_name: latest
           files: |
             dist-${{ github.ref_name }}.zip
             dist-${{ github.ref_name }}.zip.sha256
           overwrite: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
