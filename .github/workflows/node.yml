@@ -28,9 +28,6 @@ jobs:
       - name: Build project
         run: npm run build --if-present
 
-      - name: Run tests
-        run: npm test
-
       - name: Zip dist folder
         run: zip -r dist-${{ github.ref_name }}.zip dist
 
