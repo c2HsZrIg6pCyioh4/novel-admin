@@ -8,10 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        node-version: [v22.14.0]
+        node-version: [22.14.0]
 
     steps:
       - uses: actions/checkout@v4
@@ -28,33 +27,27 @@ jobs:
       - name: Build project
         run: npm run build --if-present
 
-      - name: Zip dist folder
-        run: zip -r dist-${{ github.ref_name }}.zip dist
-      
-      - name: Zip dist folder vlatest
-        run: zip -r dist-vlatest.zip dist
+      - name: Zip dist folders
+        run: |
+          # Tag 版本
+          zip -r dist-${{ github.ref_name }}.zip dist
+          sha256sum dist-${{ github.ref_name }}.zip > dist-${{ github.ref_name }}.zip.sha256
+          # latest 版本
+          zip -r dist-vlatest.zip dist
+          sha256sum dist-vlatest.zip > dist-vlatest.zip.sha256
+          ls -al
 
-      - name: Generate SHA256 checksum
-        run: sha256sum dist-${{ github.ref_name }}.zip > dist-${{ github.ref_name }}.zip.sha256
-
-      - name: Generate SHA256 checksum vlatest
-        run: sha256sum dist-vlatest.zip > dist-vlatest.zip.sha256
-        
-      - name: Upload artifact (zip + checksum)
+      - name: Upload artifact (all zip + checksum)
         uses: actions/upload-artifact@v4
         with:
           name: dist-${{ github.ref_name }}
           path: |
             dist-${{ github.ref_name }}.zip
             dist-${{ github.ref_name }}.zip.sha256
-
-      - name: Upload artifact (zip + checksum) vlatest
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-vlatest
-          path: |
             dist-vlatest.zip
             dist-vlatest.zip.sha256
+          if-no-files-found: error
+
   release:
     needs: build
     runs-on: ubuntu-latest
@@ -66,11 +59,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist-${{ github.ref_name }}
-          path: |
-            dist-${{ github.ref_name }}.zip
-            dist-${{ github.ref_name }}.zip.sha256
-            dist-vlatest.zip
-            dist-vlatest.zip.sha256
+          path: .   # 下载到当前目录
 
       # 1️⃣ 创建或更新 Tag Release
       - name: Create/Update Tagged Release
@@ -91,10 +80,9 @@ jobs:
         with:
           tag: latest
           name: Release latest
-          allowUpdates: true          # ✅ 已存在时更新
-          replacesArtifacts: true     # ✅ 覆盖旧文件
+          allowUpdates: true
+          replacesArtifacts: true
           artifacts: |
             dist-vlatest.zip
             dist-vlatest.zip.sha256
           token: ${{ secrets.GITHUB_TOKEN }}
-
