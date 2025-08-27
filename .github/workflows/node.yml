@@ -48,6 +48,13 @@ jobs:
             dist-${{ github.ref_name }}.zip
             dist-${{ github.ref_name }}.zip.sha256
 
+      - name: Upload artifact (zip + checksum) vlatest
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-vlatest
+          path: |
+            dist-vlatest.zip
+            dist-vlatest.zip.sha256
   release:
     needs: build
     runs-on: ubuntu-latest
@@ -58,8 +65,12 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: dist-files
-          path: .
+          name: dist-${{ github.ref_name }}
+          path: |
+            dist-${{ github.ref_name }}.zip
+            dist-${{ github.ref_name }}.zip.sha256
+            dist-vlatest.zip
+            dist-vlatest.zip.sha256
 
       # 1️⃣ 创建或更新 Tag Release
       - name: Create/Update Tagged Release
