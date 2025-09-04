@@ -17,5 +17,22 @@ export const getChapter = (novelId, chapterIndex) => request({ url: `/chapters/$
 export const createChapter = (novelId, payload) => request({ url: `/chapters/${novelId}`, method: 'post', data: payload })
 export const updateChapter = (novelId, chapterIndex, payload) => request({ url: `/chapters/${novelId}/${chapterIndex}`, method: 'put', data: payload })
 export const deleteChapter = (novelId, chapterIndex) => request({ url: `/chapters/${novelId}/${chapterIndex}`, method: 'delete' })
+// —— 图片上传 ——
+export const uploadImage = async (file) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await request({
+        url: '/images/uploads',  // 不需要写死 http://localhost:...，拦截器会加
+        method: 'post',
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' }
+    })
+
+    if (res.ok && res.links?.webp) {
+        return res.links.webp  // 返回相对路径
+    } else {
+        throw new Error('上传失败或没有 webp 地址')
+    }
+}
 
 export default request

@@ -4,3 +4,4 @@ public/mock
 dist
  .env.development
 .env.production
+public
