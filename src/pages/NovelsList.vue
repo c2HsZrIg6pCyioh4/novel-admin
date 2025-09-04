@@ -3,6 +3,14 @@
     <header class="card-hd">
       <h2>小说管理</h2>
       <div class="actions">
+        <!-- 搜索框 -->
+        <input
+            v-model="searchQuery"
+            class="search-input"
+            type="text"
+            placeholder="搜索小说名称/作者"
+            @keyup.enter="page=1"
+        />
         <router-link class="btn" to="/novels/new">新增小说</router-link>
       </div>
     </header>
@@ -42,7 +50,7 @@
       </table>
     </div>
 
-    <Pagination :total="novels.length" v-model:page="page" :pageSize="pageSize" />
+    <Pagination :total="filtered.length" v-model:page="page" :pageSize="pageSize" />
   </section>
 </template>
 
@@ -54,10 +62,22 @@ import Pagination from '../components/Pagination.vue'
 const novels = ref([])
 const page = ref(1)
 const pageSize = ref(10)
+const searchQuery = ref('')
 
+// 过滤后的数据
+const filtered = computed(() => {
+  if (!searchQuery.value) return novels.value
+  const q = searchQuery.value.toLowerCase()
+  return novels.value.filter(n =>
+      (n.name && n.name.toLowerCase().includes(q)) ||
+      (n.author && n.author.toLowerCase().includes(q))
+  )
+})
+
+// 分页数据
 const paginated = computed(() => {
   const start = (page.value - 1) * pageSize.value
-  return novels.value.slice(start, start + pageSize.value)
+  return filtered.value.slice(start, start + pageSize.value)
 })
 
 function fmt(ts) {
@@ -80,7 +100,9 @@ onMounted(load)
 
 <style scoped>
 .card { background:#fff; border-radius:16px; box-shadow: 0 8px 24px rgba(0,0,0,.06); }
-.card-hd { display:flex; align-items:center; justify-content:space-between; padding:16px 16px 0; }
+.card-hd { display:flex; align-items:center; justify-content:space-between; padding:16px 16px 0; gap:12px; }
+.actions { display:flex; align-items:center; gap:12px; }
+.search-input { padding:6px 10px; border:1px solid #ddd; border-radius:6px; }
 .actions .btn { padding:8px 12px; background:#2563eb; color:#fff; border-radius:8px; text-decoration:none; }
 .table-wrap { overflow:auto; padding: 16px; }
 table { width:100%; border-collapse:collapse; }
