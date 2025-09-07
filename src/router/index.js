@@ -9,6 +9,11 @@ import Login from '../pages/Login.vue'
 const routes = [
   { path: '/', redirect: '/novels' },
   { path: '/login', component: Login },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('@/pages/Dashboard.vue')
+  },
   // OAuth 回调统一路由
   {
     path: '/oauth/:provider/callback',

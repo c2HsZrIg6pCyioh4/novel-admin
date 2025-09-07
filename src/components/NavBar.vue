@@ -4,6 +4,7 @@
 
     <nav class="links">
       <router-link to="/novels">📚 小说列表</router-link>
+      <router-link to="/dashboard">📊 数据大盘</router-link>
     </nav>
 
     <div class="spacer" />
