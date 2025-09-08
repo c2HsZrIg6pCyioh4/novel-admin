@@ -6,10 +6,19 @@
       <p class="value">{{ totalNovels }}</p>
       <p class="sub">已审核：{{ auditedCount }} / 未审核：{{ unauditedCount }}</p>
     </div>
+
+    <!-- 分类数 + 每个分类统计 -->
     <div class="card small">
       <h3>分类数</h3>
       <p class="value">{{ categories.length }}</p>
+      <ul class="sub-list">
+        <li v-for="c in categories" :key="c.name">
+          {{ c.name }}：{{ c.count }}篇（已审核：{{ c.audited }} / 未审核：{{ c.unaudited }}）
+        </li>
+      </ul>
     </div>
+
+    <!-- 今日更新 -->
     <div class="card small">
       <h3>今日更新</h3>
       <p class="value">{{ todayUpdateCount }}</p>
@@ -117,6 +126,7 @@ onMounted(async () => {
   novels.forEach(novel => {
     const isAudited = !!novel.audit_by?.Valid
 
+    // 分类
     if (!categoryMap[novel.category]) {
       categoryMap[novel.category] = { count: 0, audited: 0, unaudited: 0, authors: {} }
     }
@@ -124,6 +134,7 @@ onMounted(async () => {
     if (isAudited) categoryMap[novel.category].audited++
     else categoryMap[novel.category].unaudited++
 
+    // 作者
     const authorName = novel.author
     if (!categoryMap[novel.category].authors[authorName]) {
       categoryMap[novel.category].authors[authorName] = {
@@ -152,7 +163,6 @@ onMounted(async () => {
   // 今日更新统计 + 明细
   const today = new Date().toISOString().slice(0, 10)
   const todayNovels = novels.filter(n => n.updated_at?.slice(0, 10) === today)
-
   todayUpdateCount.value = todayNovels.length
   todayAudited.value = todayNovels.filter(n => n.audit_by?.Valid).length
   todayUnaudited.value = todayUpdateCount.value - todayAudited.value
@@ -211,6 +221,17 @@ onMounted(async () => {
   margin-top: 2px;
 }
 
+.sub-list {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #666;
+  padding-left: 0;
+  list-style: none;
+}
+.sub-list li {
+  margin: 2px 0;
+}
+
 .card ul {
   padding-left: 16px;
   margin: 0;
@@ -258,12 +279,12 @@ onMounted(async () => {
 }
 
 .audit-tag.audited {
-  background-color: #d1fae5; /* 绿色淡背景 */
+  background-color: #d1fae5;
   color: #065f46;
 }
 
 .audit-tag.unaudited {
-  background-color: #fee2e2; /* 红色淡背景 */
+  background-color: #fee2e2;
   color: #991b1b;
 }
 </style>
