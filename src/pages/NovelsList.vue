@@ -88,7 +88,7 @@
       </table>
     </div>
 
-    <Pagination :total="filtered.length" v-model:page="page" :pageSize="pageSize" />
+    <Pagination :total="filtered.length" v-model:page="page" v-model:pageSize="pageSize" />
   </section>
 </template>
 
