@@ -23,6 +23,9 @@
               <button class="oauth-btn apple" @click="oauthLogin('apple')">
                 <span class="icon"></span> Apple
               </button>
+              <button class="oauth-btn generic" @click="oauthLogin('generic')">
+                <span class="icon">generic</span> generic
+              </button>
           </div>
         </div>
 
@@ -85,6 +88,9 @@ async function oauthLogin(provider) {
     // 3️⃣ 构建 Apple 登录 URL
     let authUrl = ''
     switch(provider) {
+      case 'generic':
+        authUrl = `${config.authServer}?response_type=code&response_mode=form_post&client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${scope}&state=${state}`
+        break
       case 'wechat':
         authUrl = `${config.authServer}?response_type=code&response_mode=form_post&client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${scope}&state=${state}`
         break

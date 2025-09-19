@@ -43,7 +43,7 @@ const authEnabled = (import.meta.env.VITE_AUTH_ENABLED || 'true') === 'true'
 // 需要登录的路由守卫
 router.beforeEach((to, from, next) => {
   const isDev = import.meta.env.DEV
-  const publicRoutes = ['/login', '/oauth/wechat/callback', '/oauth/apple/callback']
+  const publicRoutes = ['/login', '/oauth/wechat/callback', '/oauth/apple/callback', '/oauth/generic/callback']
 
   if (publicRoutes.includes(to.path)) {
     return next()
