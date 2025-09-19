@@ -80,7 +80,7 @@ async function oauthLogin(provider) {
 
     if (!config) throw new Error(`未找到 ${provider} 的配置`)
 
-    const { client_id, redirect_uri, scope, client_secret, auth_url } = config
+    const { client_id, redirect_uri, scope, oauth_domain } = config
 
     // 2️⃣ 生成随机 state
     const state = Math.random().toString(36).substring(2, 10)
@@ -89,10 +89,10 @@ async function oauthLogin(provider) {
     let authUrl = ''
     switch(provider) {
       case 'generic':
-        authUrl = `${config.authServer}?response_type=code&response_mode=form_post&client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${scope}&state=${state}`
+        authUrl = `https://${oauth_domain}/oauth/authorize?response_type=code&response_mode=form_post&client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${scope}&state=${state}`
         break
       case 'wechat':
-        authUrl = `${config.authServer}?response_type=code&response_mode=form_post&client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${scope}&state=${state}`
+        authUrl = `https://${oauth_domain}/oauth/authorize?response_type=code&response_mode=form_post&client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${scope}&state=${state}`
         break
       case 'apple':
         authUrl = `https://appleid.apple.com/auth/authorize?response_type=code&response_mode=form_post&client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${scope}&state=${state}`
