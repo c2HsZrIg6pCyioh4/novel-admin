@@ -3,7 +3,7 @@ import { getServerAddress } from './server'
 
 // 创建 axios 实例
 const request = axios.create({
-    timeout: 5000
+    timeout: 60000
 })
 
 // 请求拦截器
